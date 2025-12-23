@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+
+    <title>@ViewData["Title"] - LibraryManagement</title>
+    <script type="importmap"></script>
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LibraryManagement.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm fixed-top">
+            <div class="container-fluid">
+                <button id="sidebarToggle" class="btn btn-link text-dark me-2 p-0 border-0">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LibraryManagement</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                        </li>
+                    </ul>
+                    <!-- Logout -->
+                    <ul class="navbar-nav">
+                        <li class="nav-item mt-auto">
+                            <a class="nav-link logout-link" asp-controller="Login" asp-action="Logout">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span class="sidebar-text ms-2">Logout</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="bg-dark position-fixed top-0 bottom-0 start-0 d-flex flex-column overflow-auto" style="margin-top: 56px; margin-bottom: 56px; z-index: 1000;">
+        <ul class="nav flex-column">
+            <!-- Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link text-white-50 d-flex align-items-center py-3 px-3" href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
+                    <i class="bi bi-speedometer2 fs-5" style="min-width: 30px;"></i>
+                    <span class="sidebar-text ms-2">Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Books Management -->
+            <li class="nav-item">
+                <a class="nav-link text-white-50 d-flex align-items-center py-3 px-3" href="~/Book/Book" data-bs-toggle="tooltip" data-bs-placement="right" title="Books Management">
+                    <i class="bi bi-book fs-5" style="min-width: 30px;"></i>
+                    <span class="sidebar-text ms-2">Books Management</span>
+                </a>
+            </li>
+
+            <!-- Tracking Management -->
+            <li class="nav-item">
+                <a class="nav-link text-white-50 d-flex align-items-center py-3 px-3" href="~/Tracking/Tracking" data-bs-toggle="tooltip" data-bs-placement="right" title="Books Management">
+                    <i class="bi bi-people fs-5" style="min-width: 30px;"></i>
+                    <span class="sidebar-text ms-2">Tracking Management</span>
+                </a>
+            </li>
+           
+        </ul>
+    </nav>
+
+    <!-- Overlay for mobile -->
+    <div id="overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-none" style="z-index: 999; margin-top: 56px;"></div>
+
+    <!-- Content -->
+    <div id="content" class="min-vh-100" style="margin-top: 56px; margin-bottom: 56px;">
+        <div class="container-fluid">
+            <main role="main" class="py-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-top bg-light text-muted position-fixed bottom-0 start-0 end-0" style="height: 56px; z-index: 1020;">
+        <div class="container d-flex align-items-center h-100">
+            &copy; 2025 - LibraryManagement - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function() {
+            var $sidebar = $('#sidebar');
+            var $content = $('#content');
+            var $overlay = $('#overlay');
+            var $sidebarToggle = $('#sidebarToggle');
+
+
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Sidebar toggle functionality
+            $sidebarToggle.on('click', function() {
+                if ($(window).width() <= 768) {
+                    // Mobile: slide sidebar and show overlay
+                    $sidebar.toggleClass('sidebar-active');
+                    $overlay.toggleClass('d-none');
+                } else {
+                    // Desktop: collapse/expand sidebar
+                    $sidebar.toggleClass('sidebar-collapsed');
+                    $content.toggleClass('content-expanded');
+
+                    // Update tooltips visibility
+                    if ($sidebar.hasClass('sidebar-collapsed')) {
+                        tooltipList.forEach(function(tooltip) {
+                            tooltip.enable();
+                        });
+                    } else {
+                        tooltipList.forEach(function(tooltip) {
+                            tooltip.disable();
+                        });
+                    }
+                }
+            });
+
+            // Close sidebar when clicking overlay (mobile)
+            $overlay.on('click', function() {
+                $sidebar.removeClass('sidebar-active');
+                $overlay.addClass('d-none');
+            });
+
+            // Handle window resize
+            $(window).on('resize', function() {
+                if ($(window).width() > 768) {
+                    $sidebar.removeClass('sidebar-active');
+                    $overlay.addClass('d-none');
+                }
+            });
+
+            // Disable tooltips on page load if sidebar is expanded
+            if (!$sidebar.hasClass('sidebar-collapsed')) {
+                tooltipList.forEach(function(tooltip) {
+                    tooltip.disable();
+                });
+            }
+
+            // Keep dropdown open when clicking inside (for collapsed sidebar)
+            $('#sidebar .dropdown-menu').on('click', function(e) {
+                if ($sidebar.hasClass('sidebar-collapsed')) {
+                    e.stopPropagation();
+                }
+            });
+
+            // Add hover effect to nav links
+            $('#sidebar .nav-link').hover(
+                function() {
+                    $(this).removeClass('text-white-50').addClass('text-white bg-secondary');
+                },
+                function() {
+                    $(this).removeClass('text-white bg-secondary').addClass('text-white-50');
+                }
+            );
+
+            // Add hover effect to dropdown items
+            $('#sidebar .dropdown-item').hover(
+                function() {
+                    $(this).addClass('bg-dark');
+                },
+                function() {
+                    $(this).removeClass('bg-dark');
+                }
+            );
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    
+
+</body>
+</html>

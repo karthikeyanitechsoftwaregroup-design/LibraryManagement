@@ -1,0 +1,82 @@
+﻿@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="container d-flex justify-content-center align-items-center h-100">
+    <div class="col-md-4">
+        <div class="card shadow login-card">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4">Library Login</h3>
+
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password">
+                </div>
+
+                <div class="d-grid">
+                    <button id="btnLogin" class="btn btn-primary">
+                        <span id="btnText">Login</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                    </button>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <span id="resultMessage" class="fw-bold"></span>
+                    <div id="statusCodeBadge" class="mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $("#btnLogin").click(function () {
+
+            var username = $("#username").val().trim();
+            var password = $("#password").val().trim();
+
+            $("#resultMessage").text("");
+            $("#statusCodeBadge").html("");
+
+            $.ajax({
+                url: "/Login/LoginAuth",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    Username: username,
+                    Password: password
+                }),
+                success: function (response) {
+
+                    $("#resultMessage").text(response.resultMessage);
+
+                    var badgeClass = response.statusCode === 200 ? "bg-success" : "bg-danger";
+                    
+                    if (response.statusCode === 200) {
+
+                        
+                             $("#resultMessage")
+                            .removeClass("text-danger")
+                            .addClass("text-success")
+                            .text("Login Successful");
+
+                        setTimeout(function () {
+                            window.location.href = response.redirectUrl;
+                        }, 800);
+                    }
+                },
+                error: function () {
+                    $("#resultMessage")
+                        .text("Unable to reach API")
+                        .addClass("text-danger");
+                }
+            });
+        });
+    </script>
+}

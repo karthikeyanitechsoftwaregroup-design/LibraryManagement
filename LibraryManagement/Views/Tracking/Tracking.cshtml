@@ -1,0 +1,517 @@
+﻿@model List<LibraryManagement.Models.TrackingModelById>
+
+@{
+    ViewData["Title"] = "Tracking Management";
+}
+
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .action-icons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+        .action-icons a {
+            margin: 0 6px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+    .view-icon {
+        color: #0d6efd;
+    }
+
+    .edit-icon {
+        color: #198754;
+    }
+
+    .delete-icon {
+        color: #dc3545;
+    }
+
+    .form-control.is-valid,
+    .form-control.is-invalid {
+        background-image: none !important;
+        padding-right: 0.75rem !important;
+    }
+
+    .select2-selection.is-valid,
+    .select2-selection.is-invalid {
+        background-image: none !important;
+    }
+
+
+</style>
+
+<div class="container mt-4">
+
+    <div class="page-header">
+        <h2 class="page-title">Tracking Management</h2>
+        <button class="btn btn-primary" id="btnAddTracking">
+            <i class="bi bi-plus-circle"></i> Add Tracking
+        </button>
+    </div>
+
+    <table id="trackingTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Book Name</th>
+                <th>Member Name</th>
+                <th>Member Email</th>
+                <th>Member PhoneNumber</th>
+                <th>TrackingStatus</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal fade" id="trackingModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 id="trackingModalLabel">Add Tracking</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="trackingForm" novalidate>
+                    <input type="hidden" id="trackingUid" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Book Name <span class="text-danger">*</span></label>
+                            <select id="bookUid" class="form-control searchable-select" required>
+                                <option value="">-- Select Book Name --</option>
+                            </select>
+                            <div class="invalid-feedback">Book Name is required.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Tracking Status <span class="text-danger">*</span></label>
+                            <select id="trackingStatus" class="form-control searchable-select" required>
+                                <option value="">-- Select Tracking Status --</option>
+                                <option value="Purchased">Purchased</option>
+                                <option value="Returned">Returned</option>
+                            </select>
+                            <div class="invalid-feedback">Tracking Status is required.</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Member First Name <span class="text-danger">*</span></label>
+                            <input type="text"
+                                   id="firstName"
+                                   class="form-control"
+                                   placeholder="Enter Member First Name"
+                                   required />
+                            <div class="invalid-feedback">Member First Name is required.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Member Last Name <span class="text-danger">*</span></label>
+                            <input type="text"
+                                   id="lastName"
+                                   class="form-control"
+                                   placeholder="Enter Member Last Name"
+                                   required />
+                            <div class="invalid-feedback">Member Last Name is required.</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Member Email <span class="text-danger">*</span></label>
+                            <input type="email"
+                                   id="email"
+                                   class="form-control"
+                                   placeholder="Enter Member Email"
+                                   required />
+                            <div class="invalid-feedback">Member Email is required.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Member Phone Number <span class="text-danger">*</span></label>
+                            <input type="text"
+                                   id="phone"
+                                   class="form-control"
+                                   placeholder="Enter 10 digit phone number"
+                                   maxlength="10"
+                                   required />
+                            <div class="invalid-feedback" id="phoneError">
+                                Member Phone Number is required.
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="btnSaveTracking">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal fade" id="viewModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Tracking Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Book Name</label>
+                        <input type="text" id="vBook" class="form-control" disabled />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tracking Status</label>
+                        <input type="text" id="vTrackingStatus" class="form-control" disabled />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Member FirstName</label>
+                        <input type="text" id="vFirstName" class="form-control" disabled />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Member LastName</label>
+                        <input type="text" id="vLastName" class="form-control" disabled />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Member Email</label>
+                        <input type="text" id="vEmail" class="form-control" disabled />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Member PhoneNumber</label>
+                        <input type="text" id="vPhone" class="form-control" disabled />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        var dataTable;
+        var trackingData = @Html.Raw(Json.Serialize(Model));
+
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: "1500"
+        };
+
+        /* ================= VIEW ================= */
+
+                function viewTracking(id) {
+            $.get(`/Tracking/Details?id=${id}`, function (response) {
+
+                if (!response || response.success !== true) {
+                    toastr.error("Unable to load tracking details");
+                    return;
+                }
+
+                const d = response.data;
+
+                // ✅ Convert tracking status to readable text
+                let trackingStatusText = d.trackingStatus;
+
+                if (d.trackingStatus === 1 || d.trackingStatus === "1") {
+                    trackingStatusText = "Purchased";
+                } else if (d.trackingStatus === 2 || d.trackingStatus === "2") {
+                    trackingStatusText = "Returned";
+                }
+
+                $('#vBook').val(d.title);
+                $('#vTrackingStatus').val(trackingStatusText);
+                $('#vFirstName').val(d.firstName);
+                $('#vLastName').val(d.lastName);
+                $('#vEmail').val(d.email);
+                $('#vPhone').val(d.phone);
+
+                $('#viewModal').modal('show');
+            });
+        }
+
+
+        /* ================= EDIT ================= */
+
+        function editTracking(id) {
+            $.get(`/Tracking/Details?id=${id}`, function (response) {
+
+                if (!response || response.success !== true) {
+                    toastr.error("Tracking not found");
+                    return;
+                }
+
+                const d = response.data;
+
+                $('#trackingUid').val(d.trackingUid);
+                $('#firstName').val(d.firstName);
+                $('#lastName').val(d.lastName);
+                $('#email').val(d.email);
+                $('#phone').val(d.phone);
+
+                $('#trackingModalLabel').text("Edit Tracking");
+                $('#trackingModal').modal('show');
+
+                $('#trackingModal').one('shown.bs.modal', function () {
+                    loadBooksForEdit(d.bookUid, d.trackingStatus);
+                });
+            });
+        }
+
+        /* ================= LOAD BOOKS ================= */
+
+        function loadBooksForEdit(bookUid, trackingStatus) {
+
+            $.ajax({
+                url: '@Url.Action("GetBooksForDropdown", "Tracking")',
+                type: 'GET',
+                dataType: 'json', // 🔥 FORCE JSON
+                success: function (data) {
+
+                    const ddl = $('#bookUid');
+                    ddl.empty();
+                    ddl.append('<option value="">-- Select Book Name --</option>');
+
+                    data.forEach(b => {
+                        ddl.append(`<option value="${b.bookUid}">${b.title}</option>`);
+                    });
+
+                    initSelect2();
+
+                    if (bookUid) {
+                        $('#bookUid').val(String(bookUid)).trigger('change');
+                    }
+
+                    if (trackingStatus) {
+                        $('#trackingStatus').val(trackingStatus).trigger('change');
+                    }
+                }
+            });
+        }
+
+        /* ================= DELETE ================= */
+
+        function deleteTracking(id) {
+            $.post('@Url.Action("Delete", "Tracking")', { id }, function (response) {
+
+                if (!response || response.success !== true) {
+                    toastr.error(response?.message || "Delete failed");
+                    return;
+                }
+
+                toastr.success(response.message);
+                setTimeout(() => location.reload(), 1500);
+            });
+        }
+
+        /* ================= SELECT2 ================= */
+
+        function initSelect2() {
+
+            if (!$('#bookUid').hasClass("select2-hidden-accessible")) {
+                $('#bookUid').select2({
+                    dropdownParent: $('#trackingModal'),
+                    width: '100%',
+                    placeholder: '-- Select Book Name --',
+                    allowClear: true
+                });
+            }
+
+            if (!$('#trackingStatus').hasClass("select2-hidden-accessible")) {
+                $('#trackingStatus').select2({
+                    dropdownParent: $('#trackingModal'),
+                    width: '100%',
+                    placeholder: '-- Select Tracking Status --',
+                    allowClear: true
+                });
+            }
+        }
+
+        /* ================= VALIDATION ================= */
+
+        function showTrackingValidation() {
+            let isValid = true;
+
+            $('#trackingForm').find('input, select').each(function () {
+
+                if (!$(this).prop('required')) return;
+
+                let value = $(this).val()?.trim();
+                let id = $(this).attr('id');
+
+                if (id === 'phone') {
+
+                    if (!value) {
+                        $('#phone').addClass('is-invalid');
+                        $('#phoneError').text('Member Phone Number is required.');
+                        isValid = false;
+                        return;
+                    }
+
+                    if (!/^\d{10}$/.test(value)) {
+                        $('#phone').addClass('is-invalid');
+                        $('#phoneError').text('Member Phone Number must be exactly 10 digits.');
+                        isValid = false;
+                        return;
+                    }
+
+                    $('#phone').removeClass('is-invalid');
+                    return;
+                }
+
+                if (!value) {
+                    $(this).addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
+            return isValid;
+        }
+
+        function resetTrackingForm() {
+            $('#trackingForm')[0].reset();
+            $('#trackingUid').val('');
+        }
+
+        /* ================= DOCUMENT READY ================= */
+
+        $(document).ready(function () {
+
+            dataTable = $('#trackingTable').DataTable({
+                data: trackingData,
+                columns: [
+                    { data: 'title' },
+                    { data: null, render: r => r.firstName + ' ' + r.lastName },
+                    { data: 'email' },
+                    { data: 'phone' },
+                    { data: 'trackingStatus' },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: r => `
+                            <div class="action-icons">
+                                <a class="view-icon" onclick="viewTracking(${r.trackingUid})"><i class="bi bi-eye-fill"></i></a>
+                                <a class="edit-icon" onclick="editTracking(${r.trackingUid})"><i class="bi bi-pencil-square"></i></a>
+                                <a class="delete-icon" onclick="deleteTracking(${r.trackingUid})"><i class="bi bi-trash-fill"></i></a>
+                            </div>`
+                    }
+                ]
+            });
+
+            $('#btnAddTracking').click(function () {
+                resetTrackingForm();
+                $('#trackingModalLabel').text("Add Tracking");
+                $('#trackingModal').modal('show');
+
+                $('#trackingModal').one('shown.bs.modal', function () {
+                    loadBooksForEdit(null, null);
+                });
+            });
+
+            $('#btnSaveTracking').click(function () {
+
+                if (!showTrackingValidation()) return;
+
+                var trackingUid = $('#trackingUid').val() ? parseInt($('#trackingUid').val()) : 0;
+
+                var formData = {
+                    trackingUid: trackingUid,
+                    bookUid: parseInt($('#bookUid').val()),
+                    firstName: $('#firstName').val().trim(),
+                    lastName: $('#lastName').val().trim(),
+                    email: $('#email').val().trim(),
+                    phone: $('#phone').val().trim(),
+                    trackingStatus: $('#trackingStatus').val()
+                };
+
+                var apiUrl = trackingUid === 0
+                    ? '@Url.Action("Create", "Tracking")'
+                    : '@Url.Action("Update", "Tracking")';
+
+                $.ajax({
+                    url: apiUrl,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+
+                        if (!response || response.success !== true) {
+                            toastr.error(response?.message || "Operation failed");
+                            return;
+                        }
+
+                        toastr.success(response.message);
+                        $('#trackingModal').modal('hide');
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                });
+            });
+
+            $('#firstName, #lastName').on('input', function () {
+                this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+            });
+
+            $('#phone').on('input', function () {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+            $('#trackingModal').on('hidden.bs.modal', function () {
+                $('#trackingForm').find('.is-invalid').removeClass('is-invalid');
+                // ❌ DO NOT destroy select2 here
+            });
+        });
+    </script>
+}
+
+
+
+
+
+
